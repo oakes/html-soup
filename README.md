@@ -15,9 +15,8 @@ A Clojure and ClojureScript library that turns this...
 Each semantically meaningful token in the Clojure(Script) code is wrapped in `span` tags with a descriptive CSS class. The actual CSS is up to you to define. Example use:
 
 ```clojure
-(require '[html-soup.core :refer [code->html]])
-
-(code->html "(+ 1 1)") ; returns a new string with HTML added
+(code->html "(+ 1 1)")
+; => "<span class='collection list'><span class='delimiter'>(</span><span class='symbol'>+</span> <span class='number'>1</span> <span class='number'>1</span><span class='delimiter'>)</span></span>"
 ```
 
 ## Licensing

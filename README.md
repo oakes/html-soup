@@ -1,3 +1,5 @@
+[![Clojars Project](https://img.shields.io/clojars/v/html-soup.svg)](https://clojars.org/html-soup)
+
 ## Introduction
 
 A Clojure and ClojureScript library that turns this...

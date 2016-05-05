@@ -57,14 +57,17 @@
     (:end-line tag) "</span>"
     :else "<span>"))
 
+(def tags-for-line->html
+  (comp
+    (partition-by ts/get-column)
+    (map #(str/join (map tag->html %)))))
+
 (s/defn line->html :- Str
   "Returns the given line with html added."
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
   (let [tags-for-line (sort-by ts/get-column tags-for-line)
-        html-per-column (sequence (comp (partition-by ts/get-column)
-                                        (map #(str/join (map tag->html %))))
-                                  tags-for-line)
+        html-per-column (sequence tags-for-line->html tags-for-line)
         columns (set (map ts/get-column tags-for-line))
         segments (loop [i 0
                         segments (transient [])
@@ -87,11 +90,13 @@
   "Returns the lines with html added."
   [lines :- [Str]
    tags :- [{Keyword Any}]]
-  (let [tags-by-line (group-by ts/get-line tags)]
-    (sequence (comp (partition-all 2)
-                    (map (fn [[i line]]
-                           (line->html line (get tags-by-line (inc i))))))
-              (interleave (iterate inc 0) lines))))
+  (let [tags-by-line (group-by ts/get-line tags)
+        line->html* (fn [[i line]]
+                      (line->html line (get tags-by-line (inc i))))
+        indexes-and-lines->html (comp
+                                  (partition-all 2)
+                                  (map line->html*))]
+    (sequence indexes-and-lines->html (interleave (iterate inc 0) lines))))
 
 (s/defn code->html :- Str
   "Returns the code in the given string with html added."

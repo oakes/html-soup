@@ -143,7 +143,7 @@
   "Returns the code in the given string with html added."
   [code :- Str]
   (let [lines (split-lines code)
-        tags (ts/str->tags code)]
+        tags (ts/code->tags code)]
     (str/join \newline (parse-lines line->html lines tags))))
 
 (s/defn structurize-hiccup :- [Any]
@@ -167,6 +167,6 @@
   "Returns the code in the given string with Hiccup-compatible data structures added."
   [code :- Str]
   (let [lines (split-lines code)
-        tags (ts/str->tags code)
+        tags (ts/code->tags code)
         hiccup (apply concat (parse-lines line->hiccup lines tags))]
     (structurize-hiccup hiccup)))

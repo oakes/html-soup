@@ -61,8 +61,7 @@
   [tag :- {Keyword Any}]
   (cond
     (:delimiter? tag) [:span {:class "delimiter"}]
-    (:error? tag) [:span {:class "error"
-                          :data-message (some-> (:message tag) escape-html-str)}]
+    (:error? tag) [:span {:class "error" :data-message (:message tag)}]
     (:line tag) (let [value (:value tag)]
                   (cond
                     (symbol? value) [:span {:class "symbol"}]
@@ -91,8 +90,10 @@
 (s/defn line->segments :- [Str]
   "Splits a line into segments where tags are supposed to appear."
   [line :- Str
-   tags-for-line :- [{Keyword Any}]]
-  (let [columns (set (map ts/get-column tags-for-line))]
+   tags-for-line :- [{Keyword Any}]
+   escape? :- Bool]
+  (let [columns (set (map ts/get-column tags-for-line))
+        escape-html-char (if escape? escape-html-char identity)]
     (loop [i 0
            segments (transient [])
            current-segment (transient [])]
@@ -114,7 +115,7 @@
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
   (let [html-per-column (sequence tags-for-line->html tags-for-line)
-        segments (line->segments line tags-for-line)]
+        segments (line->segments line tags-for-line true)]
     (str/join (interleave segments (concat html-per-column (repeat ""))))))
 
 (s/defn line->hiccup :- [Any]
@@ -122,7 +123,7 @@
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
   (let [hiccup-per-column (sequence tags-for-line->hiccup tags-for-line)
-        segments (map list (line->segments line tags-for-line))]
+        segments (map list (line->segments line tags-for-line false))]
     (apply concat (interleave segments (concat hiccup-per-column (repeat nil))))))
 
 (s/defn parse-lines :- [Any]
@@ -149,7 +150,7 @@
 (s/defn structurize-hiccup :- [Any]
   "Takes a flat list of Hiccup-compatible data and adds structure to it."
   ([flat-hiccup :- [Any]]
-   (second (structurize-hiccup flat-hiccup [])))
+   (second (structurize-hiccup flat-hiccup [:span])))
   ([flat-hiccup :- [Any]
     structured-hiccup :- [Any]]
    (loop [flat-hiccup flat-hiccup
@@ -168,5 +169,6 @@
   [code :- Str]
   (let [lines (split-lines code)
         tags (ts/code->tags code)
-        hiccup (apply concat (parse-lines line->hiccup lines tags))]
+        hiccup (parse-lines line->hiccup lines tags)
+        hiccup (apply concat (interpose ["\n"] hiccup))]
     (structurize-hiccup hiccup)))

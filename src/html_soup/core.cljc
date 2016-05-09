@@ -114,7 +114,7 @@
   "Returns the given line with html added."
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
-  (let [html-per-column (sequence tags-for-line->html tags-for-line)
+  (let [html-per-column (into [] tags-for-line->html tags-for-line)
         segments (line->segments line tags-for-line true)]
     (str/join (interleave segments (concat html-per-column (repeat ""))))))
 
@@ -122,7 +122,7 @@
   "Returns the given line with Hiccup-compatible data structures added."
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
-  (let [hiccup-per-column (sequence tags-for-line->hiccup tags-for-line)
+  (let [hiccup-per-column (into [] tags-for-line->hiccup tags-for-line)
         segments (map list (line->segments line tags-for-line false))]
     (apply concat (interleave segments (concat hiccup-per-column (repeat nil))))))
 
@@ -132,12 +132,14 @@
    lines :- [Str]
    tags :- [{Keyword Any}]]
   (let [tags-by-line (group-by ts/get-line tags)]
-    (sequence (comp
-                (partition-all 2)
-                (map (fn [[i line]]
-                       (let [tags-for-line (get tags-by-line (inc i))
-                             tags-for-line (sort-by ts/get-column tags-for-line)]
-                         (parse-fn line tags-for-line)))))
+    (into
+      []
+      (comp
+        (partition-all 2)
+        (map (fn [[i line]]
+               (let [tags-for-line (get tags-by-line (inc i))
+                     tags-for-line (sort-by ts/get-column tags-for-line)]
+                 (parse-fn line tags-for-line)))))
       (interleave (iterate inc 0) lines))))
 
 (s/defn code->html :- Str

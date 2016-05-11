@@ -41,20 +41,20 @@
     (:error? tag) (format
                     "<span class='error' data-message='%s'></span>"
                     (some-> (:message tag) escape-html-str))
-    (:line tag) (let [value (:value tag)]
-                  (cond
-                    (symbol? value) "<span class='symbol'>"
-                    (list? value) "<span class='collection list'>"
-                    (vector? value) "<span class='collection vector'>"
-                    (map? value) "<span class='collection map'>"
-                    (set? value) "<span class='collection set'>"
-                    (number? value) "<span class='number'>"
-                    (string? value) "<span class='string'>"
-                    (keyword? value) "<span class='keyword'>"
-                    (nil? value) "<span class='nil'>"
-                    (contains? #{true false} value) "<span class='boolean'>"
-                    :else "<span>"))
-    (:end-line tag) "</span>"))
+    (:begin? tag) (let [value (:value tag)]
+                    (cond
+                      (symbol? value) "<span class='symbol'>"
+                      (list? value) "<span class='collection list'>"
+                      (vector? value) "<span class='collection vector'>"
+                      (map? value) "<span class='collection map'>"
+                      (set? value) "<span class='collection set'>"
+                      (number? value) "<span class='number'>"
+                      (string? value) "<span class='string'>"
+                      (keyword? value) "<span class='keyword'>"
+                      (nil? value) "<span class='nil'>"
+                      (contains? #{true false} value) "<span class='boolean'>"
+                      :else "<span>"))
+    (:end? tag) "</span>"))
 
 (s/defn tag->hiccup :- [Any]
   "Returns a Hiccup-compatible data structure for the given tag description."
@@ -62,29 +62,29 @@
   (cond
     (:delimiter? tag) [:span {:class "delimiter"}]
     (:error? tag) [:span {:class "error" :data-message (:message tag)}]
-    (:line tag) (let [value (:value tag)]
-                  (cond
-                    (symbol? value) [:span {:class "symbol"}]
-                    (list? value) [:span {:class "collection list"}]
-                    (vector? value) [:span {:class "collection vector"}]
-                    (map? value) [:span {:class "collection map"}]
-                    (set? value) [:span {:class "collection set"}]
-                    (number? value) [:span {:class "number"}]
-                    (string? value) [:span {:class "string"}]
-                    (keyword? value) [:span {:class "keyword"}]
-                    (nil? value) [:span {:class "nil"}]
-                    (contains? #{true false} value) [:span {:class "boolean"}]
-                    :else [:span]))
-    (:end-line tag) nil))
+    (:begin? tag) (let [value (:value tag)]
+                    (cond
+                      (symbol? value) [:span {:class "symbol"}]
+                      (list? value) [:span {:class "collection list"}]
+                      (vector? value) [:span {:class "collection vector"}]
+                      (map? value) [:span {:class "collection map"}]
+                      (set? value) [:span {:class "collection set"}]
+                      (number? value) [:span {:class "number"}]
+                      (string? value) [:span {:class "string"}]
+                      (keyword? value) [:span {:class "keyword"}]
+                      (nil? value) [:span {:class "nil"}]
+                      (contains? #{true false} value) [:span {:class "boolean"}]
+                      :else [:span]))
+    (:end? tag) nil))
 
 (def tags-for-line->html
   (comp
-    (partition-by ts/get-column)
+    (partition-by :column)
     (map #(str/join (map tag->html %)))))
 
 (def tags-for-line->hiccup
   (comp
-    (partition-by ts/get-column)
+    (partition-by :column)
     (map #(map tag->hiccup %))))
 
 (s/defn line->segments :- [Str]
@@ -92,7 +92,7 @@
   [line :- Str
    tags-for-line :- [{Keyword Any}]
    escape? :- Bool]
-  (let [columns (set (map ts/get-column tags-for-line))
+  (let [columns (set (map :column tags-for-line))
         escape-html-char (if escape? escape-html-char identity)]
     (loop [i 0
            segments (transient [])
@@ -114,7 +114,7 @@
   "Returns the given line with html added."
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
-  (let [html-per-column (into [] tags-for-line->html tags-for-line)
+  (let [html-per-column (into [] tags-for-line->html (sort-by :column tags-for-line))
         segments (line->segments line tags-for-line true)]
     (str/join (interleave segments (concat html-per-column (repeat ""))))))
 
@@ -122,7 +122,7 @@
   "Returns the given line with Hiccup-compatible data structures added."
   [line :- Str
    tags-for-line :- [{Keyword Any}]]
-  (let [hiccup-per-column (into [] tags-for-line->hiccup tags-for-line)
+  (let [hiccup-per-column (into [] tags-for-line->hiccup (sort-by :column tags-for-line))
         segments (map list (line->segments line tags-for-line false))]
     (apply concat (interleave segments (concat hiccup-per-column (repeat nil))))))
 
@@ -130,24 +130,20 @@
   "Returns the lines parsed with the given function."
   [parse-fn :- (pred fn?)
    lines :- [Str]
-   tags :- [{Keyword Any}]]
-  (let [tags-by-line (group-by ts/get-line tags)]
-    (into
-      []
-      (comp
-        (partition-all 2)
-        (map (fn [[i line]]
-               (let [tags-for-line (get tags-by-line (inc i))
-                     tags-for-line (sort-by ts/get-column tags-for-line)]
-                 (parse-fn line tags-for-line)))))
-      (interleave (iterate inc 0) lines))))
+   tags :- {Int [{Keyword Any}]}]
+  (loop [i 0
+         results (transient [])]
+    (if-let [line (get lines i)]
+      (recur (inc i) (conj! results (parse-fn line (get tags (inc i)))))
+      (persistent! results))))
 
 (s/defn code->html :- Str
   "Returns the code in the given string with html added."
   [code :- Str]
   (let [lines (split-lines code)
-        tags (ts/code->tags code)]
-    (str/join \newline (parse-lines line->html lines tags))))
+        tags (ts/code->tags code)
+        lines (parse-lines line->html lines tags)]
+    (str/join \newline lines)))
 
 (s/defn structurize-hiccup :- [Any]
   "Takes a flat list of Hiccup-compatible data and adds structure to it."

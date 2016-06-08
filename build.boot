@@ -14,5 +14,4 @@
   (repl :init-ns 'html-soup.core))
 
 (deftask build []
-  (set-env! :source-paths #{"src"})
-  (comp (cljs :optimizations :advanced)))
+  (comp (cljs :optimizations :advanced) (target)))

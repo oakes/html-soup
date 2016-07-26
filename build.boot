@@ -1,17 +1,28 @@
 (set-env!
   :source-paths #{"src"}
-  :dependencies '[[adzerk/boot-cljs "1.7.228-1" :scope "test"]
-                  ; project deps
-                  [org.clojure/clojure "1.8.0"]
+  :dependencies '[[org.clojure/clojure "1.8.0"]
                   [org.clojure/clojurescript "1.8.51"]
                   [prismatic/schema "0.4.3"]
-                  [tag-soup "1.3.3"]])
+                  [tag-soup "1.3.3"]]
+  :repositories (conj (get-env :repositories)
+                  ["clojars" {:url "https://clojars.org/repo/"
+                              :username (System/getenv "CLOJARS_USER")
+                              :password (System/getenv "CLOJARS_PASS")}]))
 
-(require
-  '[adzerk.boot-cljs :refer [cljs]])
+(task-options!
+  pom {:project 'html-soup
+       :version "1.2.4-SNAPSHOT"
+       :description "A library to add HTML tags to Clojure(Script) code"
+       :url "https://github.com/oakes/html-soup"
+       :license {"Public Domain" "http://unlicense.org/UNLICENSE"}}
+  push {:repo "clojars"})
 
 (deftask run-repl []
   (repl :init-ns 'html-soup.core))
 
-(deftask build []
-  (comp (cljs :optimizations :advanced) (target)))
+(deftask try []
+  (comp (pom) (jar) (install)))
+
+(deftask deploy []
+  (comp (pom) (jar) (push)))
+

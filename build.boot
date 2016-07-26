@@ -1,4 +1,5 @@
 (set-env!
+  :source-paths #{"src"}
   :dependencies '[[org.clojure/clojure "1.8.0"]
                   [org.clojure/clojurescript "1.8.51"]
                   [prismatic/schema "0.4.3"]
@@ -17,14 +18,11 @@
   push {:repo "clojars"})
 
 (deftask run-repl []
-  (set-env! :source-paths #{"src"} :resource-paths #{})
   (repl :init-ns 'html-soup.core))
 
 (deftask try []
-  (set-env! :source-paths #{} :resource-paths #{"src"})
   (comp (pom) (jar) (install)))
 
 (deftask deploy []
-  (set-env! :source-paths #{} :resource-paths #{"src"})
   (comp (pom) (jar) (push)))
 

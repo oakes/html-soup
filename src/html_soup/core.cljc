@@ -1,20 +1,17 @@
 (ns html-soup.core
   (:require [clojure.string :as str]
-            [schema.core :refer [maybe either Any Str Int Keyword Bool pred]
-             #?@(:clj [:as s])]
             [tag-soup.core :as ts]
-            #?(:cljs
-               [goog.string :as gstring :refer [format]]))
-  #?(:cljs (:require-macros [schema.core :as s])))
+            [clojure.spec :as s :refer [fdef]]
+            #?(:cljs [goog.string :as gstring :refer [format]])))
 
-(s/defn split-lines :- [Str]
+(defn split-lines
   "Splits the string into lines."
-  [s :- Str]
+  [s]
   (vec (.split s "\n" -1)))
 
-(s/defn escape-html-str :- Str
+(defn escape-html-str
   "Escapes an HTML string"
-  [s :- Str]
+  [s]
   (str/escape s
     {\< "&lt;"
      \> "&gt;"
@@ -22,9 +19,9 @@
      \" "&quot;"
      \' "&apos;"}))
 
-(s/defn escape-html-char :- Str
+(defn escape-html-char
   "Escapes an HTML character"
-  [s :- Str]
+  [s]
   (case s
     \< "&lt;"
     \> "&gt;"
@@ -33,9 +30,9 @@
     \' "&apos;"
     s))
 
-(s/defn tag->html :- Str
+(defn tag->html
   "Returns an HTML string for the given tag description."
-  [tag :- {Keyword Any}]
+  [tag]
   (cond
     (:delimiter? tag) "<span class='delimiter'>"
     (:error? tag) (format
@@ -56,9 +53,9 @@
                       :else "<span>"))
     (:end? tag) "</span>"))
 
-(s/defn tag->hiccup :- [Any]
+(defn tag->hiccup
   "Returns a Hiccup-compatible data structure for the given tag description."
-  [tag :- {Keyword Any}]
+  [tag]
   (cond
     (:delimiter? tag) [:span {:class "delimiter"}]
     (:error? tag) [:span {:class "error" :data-message (:message tag)}]
@@ -87,11 +84,9 @@
     (partition-by :column)
     (map #(map tag->hiccup %))))
 
-(s/defn line->segments :- [Str]
+(defn line->segments
   "Splits a line into segments where tags are supposed to appear."
-  [line :- Str
-   tags-for-line :- [{Keyword Any}]
-   escape? :- Bool]
+  [line tags-for-line escape?]
   (let [columns (set (map :column tags-for-line))
         escape-html-char (if escape? escape-html-char identity)]
     (loop [i 0
@@ -110,47 +105,42 @@
              persistent!
              (map str/join))))))
 
-(s/defn line->html :- Str
+(defn line->html
   "Returns the given line with html added."
-  [line :- Str
-   tags-for-line :- [{Keyword Any}]]
+  [line tags-for-line]
   (let [html-per-column (into [] tags-for-line->html (sort-by :column tags-for-line))
         segments (line->segments line tags-for-line true)]
     (str/join (interleave segments (concat html-per-column (repeat ""))))))
 
-(s/defn line->hiccup :- [Any]
+(defn line->hiccup
   "Returns the given line with Hiccup-compatible data structures added."
-  [line :- Str
-   tags-for-line :- [{Keyword Any}]]
+  [line tags-for-line]
   (let [hiccup-per-column (into [] tags-for-line->hiccup (sort-by :column tags-for-line))
         segments (map list (line->segments line tags-for-line false))]
     (apply concat (interleave segments (concat hiccup-per-column (repeat nil))))))
 
-(s/defn parse-lines :- [Any]
+(defn parse-lines
   "Returns the lines parsed with the given function."
-  [parse-fn :- (pred fn?)
-   lines :- [Str]
-   tags :- {Int [{Keyword Any}]}]
+  [parse-fn lines tags]
   (loop [i 0
          results (transient [])]
     (if-let [line (get lines i)]
       (recur (inc i) (conj! results (parse-fn line (get tags (inc i)))))
       (persistent! results))))
 
-(s/defn code->html :- Str
+(defn code->html
   "Returns the code in the given string with html added."
-  [code :- Str]
+  [code]
   (let [lines (split-lines code)
         tags (ts/code->tags code)
         lines (parse-lines line->html lines tags)]
     (str/join \newline lines)))
 
-(s/defn structurize-hiccup :- [Any]
+(defn structurize-hiccup
   "Takes a flat list of Hiccup-compatible data and adds structure to it."
-  ([flat-hiccup :- [Any]]
+  ([flat-hiccup]
    (second (structurize-hiccup flat-hiccup [:span])))
-  ([flat-hiccup :- [Any]
-    structured-hiccup :- [Any]]
+  ([flat-hiccup structured-hiccup]
    (loop [flat-hiccup flat-hiccup
           structured-hiccup structured-hiccup]
      (if-let [token (first flat-hiccup)]
@@ -162,11 +152,65 @@
            (recur flat (conj structured-hiccup structured))))
        [(rest flat-hiccup) structured-hiccup]))))
 
-(s/defn code->hiccup :- [Any]
+(defn code->hiccup
   "Returns the code in the given string with Hiccup-compatible data structures added."
-  [code :- Str]
+  [code]
   (let [lines (split-lines code)
         tags (ts/code->tags code)
         hiccup (parse-lines line->hiccup lines tags)
         hiccup (apply concat (interpose ["\n"] hiccup))]
     (structurize-hiccup hiccup)))
+
+; specs
+
+(fdef split-lines
+  :args (s/cat :str string?)
+  :ret string?)
+
+(fdef escape-html-string
+  :args (s/cat :str string?)
+  :ret string?)
+
+(fdef escape-html-char
+  :args (s/cat :str char?)
+  :ret string?)
+
+(fdef tag->html
+  :args (s/cat :tag ::ts/tag)
+  :ret string?)
+
+(fdef tag->hiccup
+  :args (s/cat :tag ::ts/tag)
+  :ret (s/coll-of any?))
+
+(fdef line->segments
+  :args (s/cat :line string? :tags-for-line (s/nilable ::ts/tags-for-line) :escape? boolean?)
+  :ret (s/coll-of string?))
+
+(fdef line->html
+  :args (s/cat :line string? :tags-for-line (s/nilable ::ts/tags-for-line))
+  :ret string?)
+
+(fdef line->hiccup
+  :args (s/cat :line string? :tags-for-line (s/nilable ::ts/tags-for-line))
+  :ret (s/coll-of any?))
+
+(fdef parse-lines
+  :args (s/cat :parse-fn fn? :lines (s/coll-of string?) :tags ::ts/all-tags)
+  :ret (s/coll-of any?))
+
+(fdef code->html
+  :args (s/cat :code string?)
+  :ret string?)
+
+#_
+(fdef structurize-hiccup
+  :args (s/alt
+          :one-arg (s/cat :flat-hiccup (s/coll-of any?))
+          :tow-args (s/cat :flat-hiccup (s/coll-of any?) :structured-hiccup (s/coll-of any?)))
+  :ret (s/coll-of any?))
+
+(fdef code->hiccup
+  :args (s/cat :code string?)
+  :ret (s/coll-of any?))
+

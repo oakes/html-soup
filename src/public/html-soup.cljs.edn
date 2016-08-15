@@ -1,3 +1,0 @@
-{:require  [html-soup.core]
- :init-fns []
- :compiler-options {}}

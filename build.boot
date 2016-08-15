@@ -2,7 +2,7 @@
   :source-paths #{"src"}
   :resource-paths #{"src"}
   :dependencies '[[org.clojure/clojure "1.9.0-alpha10"]
-                  [org.clojure/clojurescript "1.9.211"]
+                  [org.clojure/clojurescript "1.9.216"]
                   [tag-soup "1.3.4-SNAPSHOT"]]
   :repositories (conj (get-env :repositories)
                   ["clojars" {:url "https://clojars.org/repo/"

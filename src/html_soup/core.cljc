@@ -203,7 +203,6 @@
   :args (s/cat :code string?)
   :ret string?)
 
-#_
 (fdef structurize-hiccup
   :args (s/alt
           :one-arg (s/cat :flat-hiccup (s/coll-of any?))

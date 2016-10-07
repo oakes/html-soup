@@ -1,7 +1,6 @@
 (ns html-soup.core
   (:require [clojure.string :as str]
             [tag-soup.core :as ts]
-            [clojure.spec :as s :refer [fdef]]
             #?(:cljs [goog.string :as gstring :refer [format]])))
 
 (defn split-lines
@@ -160,56 +159,4 @@
         hiccup (parse-lines line->hiccup lines tags)
         hiccup (apply concat (interpose ["\n"] hiccup))]
     (structurize-hiccup hiccup)))
-
-; specs
-
-(fdef split-lines
-  :args (s/cat :str string?)
-  :ret string?)
-
-(fdef escape-html-string
-  :args (s/cat :str string?)
-  :ret string?)
-
-(fdef escape-html-char
-  :args (s/cat :str char?)
-  :ret string?)
-
-(fdef tag->html
-  :args (s/cat :tag ::ts/tag)
-  :ret string?)
-
-(fdef tag->hiccup
-  :args (s/cat :tag ::ts/tag)
-  :ret (s/coll-of any?))
-
-(fdef line->segments
-  :args (s/cat :line string? :tags-for-line (s/nilable ::ts/tags-for-line) :escape? boolean?)
-  :ret (s/coll-of string?))
-
-(fdef line->html
-  :args (s/cat :line string? :tags-for-line (s/nilable ::ts/tags-for-line))
-  :ret string?)
-
-(fdef line->hiccup
-  :args (s/cat :line string? :tags-for-line (s/nilable ::ts/tags-for-line))
-  :ret (s/coll-of any?))
-
-(fdef parse-lines
-  :args (s/cat :parse-fn fn? :lines (s/coll-of string?) :tags ::ts/all-tags)
-  :ret (s/coll-of any?))
-
-(fdef code->html
-  :args (s/cat :code string?)
-  :ret string?)
-
-(fdef structurize-hiccup
-  :args (s/alt
-          :one-arg (s/cat :flat-hiccup (s/coll-of any?))
-          :tow-args (s/cat :flat-hiccup (s/coll-of any?) :structured-hiccup (s/coll-of any?)))
-  :ret (s/coll-of any?))
-
-(fdef code->hiccup
-  :args (s/cat :code string?)
-  :ret (s/coll-of any?))
 

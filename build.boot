@@ -3,7 +3,7 @@
   :resource-paths #{"src"}
   :dependencies '[[org.clojure/clojure "1.8.0"]
                   [org.clojure/clojurescript "1.9.225"]
-                  [tag-soup "1.3.4-SNAPSHOT"]]
+                  [tag-soup "1.3.4"]]
   :repositories (conj (get-env :repositories)
                   ["clojars" {:url "https://clojars.org/repo/"
                               :username (System/getenv "CLOJARS_USER")

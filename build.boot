@@ -2,8 +2,8 @@
   :source-paths #{"src"}
   :resource-paths #{"src"}
   :dependencies '[[org.clojure/clojure "1.8.0"]
-                  [org.clojure/clojurescript "1.9.225"]
-                  [tag-soup "1.3.4"]]
+                  [org.clojure/clojurescript "1.9.225" :scope "provided"]
+                  [tag-soup "1.3.5"]]
   :repositories (conj (get-env :repositories)
                   ["clojars" {:url "https://clojars.org/repo/"
                               :username (System/getenv "CLOJARS_USER")
@@ -11,7 +11,7 @@
 
 (task-options!
   pom {:project 'html-soup
-       :version "1.2.5-SNAPSHOT"
+       :version "1.2.5"
        :description "A library to add HTML tags to Clojure(Script) code"
        :url "https://github.com/oakes/html-soup"
        :license {"Public Domain" "http://unlicense.org/UNLICENSE"}}

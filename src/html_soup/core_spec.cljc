@@ -1,5 +1,6 @@
 (ns html-soup.core-spec
   (:require [html-soup.core :as c]
+            [tag-soup.core-spec]
             [clojure.spec :as s :refer [fdef]]))
 
 (fdef c/split-lines

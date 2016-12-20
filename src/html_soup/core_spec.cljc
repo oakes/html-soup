@@ -46,7 +46,7 @@
 (fdef c/structurize-hiccup
   :args (s/alt
           :one-arg (s/cat :flat-hiccup (s/coll-of any?))
-          :tow-args (s/cat :flat-hiccup (s/coll-of any?) :structured-hiccup (s/coll-of any?)))
+          :two-args (s/cat :flat-hiccup (s/coll-of any?) :structured-hiccup (s/coll-of any?)))
   :ret (s/coll-of any?))
 
 (fdef c/code->hiccup

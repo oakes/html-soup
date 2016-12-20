@@ -1,13 +1,13 @@
 (ns html-soup.core-spec
   (:require [html-soup.core :as c]
-            [tag-soup.core-spec]
+            [tag-soup.core-spec :as ts]
             [clojure.spec :as s :refer [fdef]]))
 
 (fdef c/split-lines
   :args (s/cat :str string?)
   :ret string?)
 
-(fdef c/escape-html-string
+(fdef c/escape-html-str
   :args (s/cat :str string?)
   :ret string?)
 

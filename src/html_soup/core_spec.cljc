@@ -12,7 +12,7 @@
   :ret string?)
 
 (fdef c/escape-html-char
-  :args (s/cat :str char?)
+  :args (s/cat :str string?)
   :ret string?)
 
 (fdef c/tag->html

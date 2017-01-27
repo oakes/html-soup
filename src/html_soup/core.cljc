@@ -130,12 +130,10 @@
 (defn code->html
   "Returns the code in the given string with html added."
   [code]
-  (let [code (str code " ")
-        lines (split-lines code)
+  (let [lines (split-lines code)
         tags (ts/code->tags code)
-        lines (parse-lines line->html lines tags)
-        html (str/join \newline lines)]
-    (subs html 0 (dec (count html)))))
+        lines (parse-lines line->html lines tags)]
+    (str/join \newline lines)))
 
 (defn structurize-hiccup
   "Takes a flat list of Hiccup-compatible data and adds structure to it."

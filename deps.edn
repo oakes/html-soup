@@ -1,0 +1,6 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.9.0"
+                             :scope "provided"}
+        org.clojure/clojurescript {:mvn/version "1.9.946"
+                                   :scope "test"}
+        tag-soup {:mvn/version "1.5.1"}}}

@@ -28,7 +28,7 @@
      \' "&apos;"}))
 
 (fdef escape-html-char
-  :args (s/cat :str string?)
+  :args (s/cat :str char?)
   :ret string?)
 
 (defn escape-html-char

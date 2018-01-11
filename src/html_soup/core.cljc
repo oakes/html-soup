@@ -6,7 +6,7 @@
 
 (fdef split-lines
   :args (s/cat :str string?)
-  :ret string?)
+  :ret (s/coll-of string?))
 
 (defn split-lines
   "Splits the string into lines."

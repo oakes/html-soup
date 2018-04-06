@@ -28,7 +28,7 @@
 
 (task-options!
   pom {:project 'html-soup
-       :version "1.5.6"
+       :version "1.5.7-SNAPSHOT"
        :description "A library to add HTML tags to Clojure(Script) code"
        :url "https://github.com/oakes/html-soup"
        :license {"Public Domain" "http://unlicense.org/UNLICENSE"}}

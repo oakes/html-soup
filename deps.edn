@@ -1,4 +1,4 @@
 {:paths ["src"]
  :deps {org.clojure/clojure {:mvn/version "1.9.0" :scope "provided"}
-        tag-soup {:mvn/version "1.5.3"}}
+        tag-soup {:mvn/version "1.5.4"}}
  :aliases {:cljs {:extra-deps {org.clojure/clojurescript {:mvn/version "1.9.946"}}}}}

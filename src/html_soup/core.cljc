@@ -29,7 +29,7 @@
 
 (fdef escape-html-char
   :args (s/cat :str char?)
-  :ret string?)
+  :ret (s/or :str string? :char char?))
 
 (defn escape-html-char
   "Escapes an HTML character"

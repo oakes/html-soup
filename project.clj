@@ -1,4 +1,4 @@
-(defproject html-soup "1.6.1-SNAPSHOT"
+(defproject html-soup "1.6.1"
   :description "A library to add HTML tags to Clojure(Script) code"
   :url "https://github.com/oakes/html-soup"
   :license {:name "Public Domain"

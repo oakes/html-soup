@@ -27,7 +27,7 @@ Each semantically meaningful token in the Clojure(Script) code is wrapped in `sp
 ; => "<span class='collection list'><span class='delimiter'>(</span><span class='symbol'>+</span> <span class='number'>1</span> <span class='number'>1</span><span class='delimiter'>)</span></span>"
 
 (code->hiccup "(+ 1 1)")
-; => [:span "" [:span {:class "collection list"} [:span {:class "delimiter"} "("] [:span {:class "symbol"} "+"] " " [:span {:class "number"} "1"] " " [:span {:class "number"} "1"] [:span {:class "delimiter"} ")"]]]
+; => [:span {} "" [:span {:class "collection list"} [:span {:class "delimiter"} "("] [:span {:class "symbol"} "+"] " " [:span {:class "number"} "1"] " " [:span {:class "number"} "1"] [:span {:class "delimiter"} ")"]]]
 ```
 
 ## Usage

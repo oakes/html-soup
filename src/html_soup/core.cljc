@@ -185,7 +185,7 @@
 (defn structurize-hiccup
   "Takes a flat list of Hiccup-compatible data and adds structure to it."
   ([flat-hiccup]
-   (second (structurize-hiccup flat-hiccup [:span])))
+   (second (structurize-hiccup flat-hiccup [:span {}])))
   ([flat-hiccup structured-hiccup]
    (loop [flat-hiccup flat-hiccup
           structured-hiccup structured-hiccup]

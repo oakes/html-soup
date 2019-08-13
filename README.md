@@ -17,7 +17,7 @@ A Clojure and ClojureScript library that turns this...
 ...or this...
 
 ```clojure
-[:span "" [:span {:class "collection list"} [:span {:class "delimiter"} "("] [:span {:class "symbol"} "def"] " " [:span {:class "symbol"} "person"] " " [:span {:class "collection map"} [:span {:class "delimiter"} "{"] [:span {:class "keyword"} ":name"] " " [:span {:class "string"} "\"Alice\""] " " [:span {:class "keyword"} ":age"] " " [:span {:class "number"} "25"] [:span {:class "delimiter"} "}"]] [:span {:class "delimiter"} ")"]]]
+[:span {} "" [:span {:class "collection list"} [:span {:class "delimiter"} "("] [:span {:class "symbol"} "def"] " " [:span {:class "symbol"} "person"] " " [:span {:class "collection map"} [:span {:class "delimiter"} "{"] [:span {:class "keyword"} ":name"] " " [:span {:class "string"} "\"Alice\""] " " [:span {:class "keyword"} ":age"] " " [:span {:class "number"} "25"] [:span {:class "delimiter"} "}"]] [:span {:class "delimiter"} ")"]]]
 ```
 
 Each semantically meaningful token in the Clojure(Script) code is wrapped in `span` tags with a descriptive CSS class. The actual CSS is up to you to define. Example use:

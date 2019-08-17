@@ -127,7 +127,7 @@
         (->> (persistent! current-segment)
              (conj! segments)
              persistent!
-             (map str/join))))))
+             (mapv str/join))))))
 
 (fdef line->html
   :args (s/cat :line string? :tags-for-line (s/nilable :tag-soup.core/tags-for-line))

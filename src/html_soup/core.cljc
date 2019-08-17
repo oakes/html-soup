@@ -185,7 +185,7 @@
 (fdef structurize-hiccup
   :args (s/alt
           :one-arg (s/cat :flat-hiccup (s/coll-of any?))
-          :two-args (s/cat :flat-hiccup (s/coll-of any?) :structured-hiccup (s/coll-of any?)))
+          :three-args (s/cat :flat-hiccup (s/coll-of any?) :i any? :structured-hiccup (s/coll-of any?)))
   :ret (s/coll-of any?))
 
 (defn structurize-hiccup

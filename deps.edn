@@ -1,5 +1,4 @@
 {:paths ["src"]
- :deps {tag-soup {:mvn/version "1.7.1"}}
- :aliases {:dev {:extra-deps {org.clojure/clojurescript {:mvn/version "1.9.946"}}}
-           :prod {:extra-deps {leiningen {:mvn/version "2.9.0"}}
+ :deps {paren-salsa {:local/root "../paren-salsa"}}
+ :aliases {:prod {:extra-deps {leiningen {:mvn/version "2.9.0"}}
                   :main-opts ["prod.clj"]}}}

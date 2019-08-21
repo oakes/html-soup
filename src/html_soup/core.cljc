@@ -1,6 +1,6 @@
 (ns html-soup.core
   (:require [clojure.string :as str]
-            [paren-salsa.core :as ps]))
+            [parinferish.core :as ps]))
 
 (defn escape-html-str
   "Escapes an HTML string"

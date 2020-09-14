@@ -12,7 +12,7 @@
      \" "&quot;"
      \' "&apos;"}))
 
-(defn node->html [[type & tokens :as node]]
+(defn- node->html [[type & tokens :as node]]
   (let [error (-> node meta :error-message)
         inner-str (str
                     (str/join tokens)
@@ -31,7 +31,7 @@
        (ps/flatten node->html)
        str/join))
 
-(defn node->hiccup [[type & tokens :as node]]
+(defn- node->hiccup [[type & tokens :as node]]
   (let [error (-> node meta :error-message)]
     (if (-> node meta :whitespace?)
       (first tokens)

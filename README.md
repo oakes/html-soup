@@ -1,7 +1,5 @@
 [![Clojars Project](https://img.shields.io/clojars/v/html-soup.svg)](https://clojars.org/html-soup)
 
-## Note: You can get similar functionality to this library using [parinferish](https://github.com/oakes/parinferish). See the [parinferish branch](https://github.com/oakes/html-soup/blob/parinferish/src/html_soup/core.cljc#L15-L32) for a code example.
-
 ## Introduction
 
 A Clojure and ClojureScript library that turns this...
@@ -31,10 +29,6 @@ Each semantically meaningful token in the Clojure(Script) code is wrapped in `sp
 (code->hiccup "(+ 1 1)")
 ; => [:span {} [:span {:class "collection"} [:span {:class "delimiter"} "("] [:span {:class "symbol"} "+"] " " [:span {:class "number"} "1"] " " [:span {:class "number"} "1"] [:span {:class "delimiter"} ")"]]]
 ```
-
-## Usage
-
-You can include this library in your project dependencies using the version number in the badge above.
 
 ## Licensing
 

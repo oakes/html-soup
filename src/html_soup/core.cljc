@@ -3,7 +3,7 @@
             [parinferish.core :as ps]))
 
 (defn escape-html-str
-  "Escapes an HTML string"
+  "Escapes an HTML string. Mainly for internal use; you probably don't need to use this directly."
   [s]
   (str/escape s
     {\< "&lt;"

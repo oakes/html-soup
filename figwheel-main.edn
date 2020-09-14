@@ -1,0 +1,2 @@
+{:open-url "http://localhost:5000/cljs/html-soup.core"
+ :clean-outputs true}

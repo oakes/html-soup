@@ -2,9 +2,7 @@
   (:require [clojure.string :as str]
             [parinferish.core :as ps]))
 
-(defn escape-html-str
-  "Escapes an HTML string. Mainly for internal use; you probably don't need to use this directly."
-  [s]
+(defn escape-html-str [s]
   (str/escape s
     {\< "&lt;"
      \> "&gt;"
